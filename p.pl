@@ -60,7 +60,11 @@ get '/:id' => { id=>0 } => sub {
     my $hash = $self->build_thread($id);
 
     my $t = Dumper $hash;
-    return $self->respond_to( json=> encode_json $hash  );
+    return $self->respond_to( 
+              #  json=>{ json => encode_json( $hash ) },
+              #  text=>{ text=> $t  },
+                any=>{ $self->render( text=>'hi'  ) } );
+
 };
 
 # 
