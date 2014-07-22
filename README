@@ -1,4 +1,15 @@
 
 http://code-tricks.com/build-a-simple-restful-api-using-mojolicious/
 
+HOW TO RUN mojolicious application:
+    # independent shell session
+    morbo p.pl 
 
+PRESENTATION:
+    bash ./batch
+
+OUTPUT: 
+    http://pastie.org/pastes/9411704/text?key=oeirt0nwoyuib2mgceq5dw
+
+NEEDED PACKAGES:
+    #by demand

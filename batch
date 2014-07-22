@@ -1,0 +1,117 @@
+#!/bin/bash
+set -u
+
+DBFILE='dbcomment.sqlite'
+
+# data set may be reset 'on-fly' (application feature)
+[ -f "${DBFILE}" ] && rm $DBFILE
+
+CMD="echo 'Initial record'  | curl -s --data @-  -X POST http://localhost:3000/"
+echo "COMMAND: $CMD"
+eval "$CMD" | perl -ne 'print "OUTPUT : $_"'
+echo
+echo
+
+
+CMD="echo 'Second record'  | curl -s --data @-  -X POST http://localhost:3000/"
+echo "COMMAND: $CMD"
+eval "$CMD" | perl -ne 'print "OUTPUT : $_"'
+echo
+echo
+
+CMD="echo 'Third record'  | curl -s --data @-  -X POST http://localhost:3000/"
+echo "COMMAND: $CMD"
+eval "$CMD" | perl -ne 'print "OUTPUT : $_"'
+echo
+echo
+
+CMD="echo 'First subcomment for second record'  | curl -s --data @-  -X POST http://localhost:3000/2"
+echo "COMMAND: $CMD"
+eval "$CMD" | perl -ne 'print "OUTPUT : $_"'
+echo
+echo
+
+CMD="echo 'First subcomment for third record'  | curl -s --data @-  -X POST http://localhost:3000/3"
+echo "COMMAND: $CMD"
+eval "$CMD" | perl -ne 'print "OUTPUT : $_"'
+
+echo
+echo
+CMD="echo 'One more subcomment for second record'  | curl -s --data @-  -X POST http://localhost:3000/2"
+echo "COMMAND: $CMD"
+eval "$CMD" | perl -ne 'print "OUTPUT : $_"'
+
+echo
+echo
+CMD="echo 'Dive to subcomments for record 2'  | curl -s --data @-  -X POST http://localhost:3000/4"
+echo "COMMAND: $CMD"
+eval "$CMD" | perl -ne 'print "OUTPUT : $_"'
+
+echo
+echo
+CMD="echo 'Future dive to subcomments for record 2'  | curl -s --data @-  -X POST http://localhost:3000/7"
+echo "COMMAND: $CMD"
+eval "$CMD" | perl -ne 'print "OUTPUT : $_"'
+
+echo
+echo
+CMD="echo 'Parallel level for subcomments for record 2->4 ..'  | curl -s --data @-  -X POST http://localhost:3000/4"
+echo "COMMAND: $CMD"
+eval "$CMD" | perl -ne 'print "OUTPUT : $_"'
+
+echo
+echo
+CMD="sqlite3 -header -column dbcomment.sqlite '.read show.sql'"
+echo 'TITLE  : Plain structure through DB:'
+echo "COMMAND: $CMD"
+eval "$CMD" | perl -ne 'print "OUTPUT : $_"'
+
+echo
+echo
+CMD="curl -s -X GET http://localhost:3000/4?format=text"
+echo 'TITLE  : Comment list. Human readable for subcomment branch 4 (toplevel:2)'
+echo "COMMAND: $CMD"
+eval "$CMD" | perl -ne 'print "OUTPUT : $_"'
+
+echo
+echo
+CMD="curl -s -X GET http://localhost:3000/2?format=text"
+echo 'TITLE  : Comment list. Human readable for comment 2'
+echo "COMMAND: $CMD"
+eval "$CMD" | perl -ne 'print "OUTPUT : $_"'
+
+echo
+echo
+CMD="curl -s -X GET http://localhost:3000/2"
+echo 'TITLE  : Comment list. JSON for comment 2'
+echo "COMMAND: $CMD"
+eval "$CMD" | perl -ne 'print "OUTPUT : $_"'
+
+echo
+echo
+CMD="curl -s -X DELETE http://localhost:3000/8"
+echo 'TITLE  : Delete single record. id=8'
+echo "COMMAND: $CMD"
+eval "$CMD" | perl -ne 'print "OUTPUT : $_"'
+
+echo
+echo
+CMD="sqlite3 -header -column dbcomment.sqlite '.read show.sql'"
+echo 'TITLE  : Plain structure through DB (after partial deletion):'
+echo "COMMAND: $CMD"
+eval "$CMD" | perl -ne 'print "OUTPUT : $_"'
+
+echo
+echo
+CMD="curl -s -X DELETE http://localhost:3000/4"
+echo 'TITLE  : Partial recursive deletion'
+echo "COMMAND: $CMD"
+eval "$CMD" | perl -ne 'print "OUTPUT : $_"'
+
+
+echo
+echo
+CMD="curl -s -X GET http://localhost:3000/2?format=text"
+echo 'TITLE  : Comment list. Human readable for comment 2 (after deletion)'
+echo "COMMAND: $CMD"
+eval "$CMD" | perl -ne 'print "OUTPUT : $_"'
