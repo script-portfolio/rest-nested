@@ -23,7 +23,7 @@ The application must support REST protocol and be able to handle below queries:
     bash ./batch
 
 ### Presentation output
-
+```
 vlad@moon3 ~/src/rest-developex $ bash ./batch  
 COMMAND: echo 'Initial record'  | curl -s --data @-  -X POST http://localhost:3000/
 OUTPUT : SubComment inserted [id=1]
@@ -178,4 +178,4 @@ OUTPUT :                            ]
 OUTPUT :                }
 OUTPUT :         };
 vlad@moon3 ~/src/rest-developex $
-
+```
